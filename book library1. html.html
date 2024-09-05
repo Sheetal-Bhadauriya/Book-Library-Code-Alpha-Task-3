@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Book Library</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        form, .book-list {
+            margin-bottom: 20px;
+        }
+        input, select, button {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+        .borrowed {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Personal Book Library</h1>
+
+        <!-- Add Book Form -->
+        <h2>Add a New Book</h2>
+        <form id="addBookForm">
+            <input type="text" id="title" placeholder="Book Title" required>
+            <input type="text" id="author" placeholder="Author" required>
+            <select id="genre">
+                <option value="Fiction">Fiction</option>
+                <option value="Non-Fiction">Non-Fiction</option>
+                <option value="Biography">Biography</option>
+                <option value="Fantasy">Fantasy</option>
+            </select>
+            <button type="submit">Add Book</button>
+        </form>
+
+        <!-- Search Form -->
+        <h2>Search Books</h2>
+        <form id="searchForm">
+            <input type="text" id="searchQuery" placeholder="Search by title or author">
+            <button type="submit">Search</button>
+        </form>
+
+        <!-- Book List -->
+        <h2>Available Books</h2>
+        <ul id="bookList"></ul>
+    </div>
+
+    <script>
+        // Initialize library from localStorage or create an empty array
+        let library = JSON.parse(localStorage.getItem('library')) || [];
+
+        // Function to display books
+        function displayBooks(books) {
+            const bookList = document.getElementById('bookList');
+            bookList.innerHTML = ''; // Clear the list before displaying
+            books.forEach((book, index) => {
+                const bookItem = document.createElement('li');
+                bookItem.innerHTML = `
+                    <strong>${book.title}</strong> by ${book.author} (${book.genre})
+                    ${book.isBorrowed ? `<span class="borrowed">- Borrowed by ${book.borrowedBy}</span>` : `
+                    <form onsubmit="borrowBook(${index}); return false;">
+                        <input type="text" placeholder="Your Name" required id="borrower-${index}">
+                        <button type="submit">Borrow</button>
+                    </form>`}
+                `;
+                bookList.appendChild(bookItem);
+            });
+        }
+
+        // Function to add a new book
+        document.getElementById('addBookForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const title = document.getElementById('title').value;
+            const author = document.getElementById('author').value;
+            const genre = document.getElementById('genre').value;
+
+            const newBook = {
+                title: title,
+                author: author,
+                genre: genre,
+                isBorrowed: false,
+                borrowedBy: null
+            };
+
+            library.push(newBook);
+            localStorage.setItem('library', JSON.stringify(library));
+            displayBooks(library);
+            this.reset();
+        });
+
+        // Function to borrow a book
+        function borrowBook(index) {
+            const borrowerName = document.getElementById(`borrower-${index}`).value;
+            library[index].isBorrowed = true;
+            library[index].borrowedBy = borrowerName;
+            localStorage.setItem('library', JSON.stringify(library));
+            displayBooks(library);
+        }
+
+        // Function to search for books
+        document.getElementById('searchForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const query = document.getElementById('searchQuery').value.toLowerCase();
+            const filteredBooks = library.filter(book =>
+                book.title.toLowerCase().includes(query) ||
+                book.author.toLowerCase().includes(query)
+            );
+            displayBooks(filteredBooks);
+        });
+
+        // Display all books on page load
+        displayBooks(library);
+    </script>
+</body>
+</html>
