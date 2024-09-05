@@ -1,16 +1,23 @@
-# Book-Library
 
-# Description
-This is a web-based personal book library app where you can add books, search by title or author, and borrow books. It runs in a web browser, storing data locally using localStorage.
+## Personal Book Library - Web App
 
-# Features
-**Add New Book**: Enter book details (title, author, genre).
+### Description
+A simple web app for managing a personal book library. You can add, search, and borrow books, with data stored locally using `localStorage`.
 
-**Search Books**: Search by title or author.
+### Features
+- **Add Books**: Add a book with title, author, and genre.
+- **Search Books**: Search by title or author.
+- **Borrow Books**: Borrow a book by entering your name.
+- **Data Persistence**: Data remains after page reload using the browser's `localStorage`.
 
-**Borrow a Book**: Record who borrowed a book.
+### How to Run
 
-**Data Persistence**: Books and borrowing history are stored using localStorage, so the data remains even after closing the browser.
+1. **Install dependencies**:
+   ```bash
+   npm install
+
+   npm start
+
 
 
 
